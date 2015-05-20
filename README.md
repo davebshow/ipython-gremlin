@@ -12,6 +12,7 @@ Example use:
 ```python
 >>> %load_ext gremlin
 >>> %gremlin 1 + 1
+[2]
 
 >>> %%gremlin
 ... graph = TinkerFactory.createModern()
