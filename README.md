@@ -10,10 +10,14 @@ Uses sessions to persist Gremlin across cells.
 Example use:
 
 ```python
+# Load the extension
 >>> %load_ext gremlin
+
+# Line magic with %gremlin
 >>> %gremlin 1 + 1
 [2]
 
+# Cell magic with %%gremlin
 >>> %%gremlin
 ... graph = TinkerFactory.createModern()
 ... g = graph.traversal(standard())
@@ -21,7 +25,7 @@ Example use:
 ...
 ['vadas', 'josh']
 
-# store results in a variable like such:
+# Store results in a variable using line magic
 >>> nodes = %gremlin g.V()
 >>> nodes[0]
 {'id': 1,
@@ -30,10 +34,10 @@ Example use:
   'name': [{'id': 0, 'properties': {}, 'value': 'marko'}]},
  'type': 'vertex'}
 
-  # Change to a new session.
- >>> import uuid
- >>> new_session = str(uuid.uuid4())
- >>> %session $new_session
+# Change to a new session.
+>>> import uuid
+>>> new_session = str(uuid.uuid4())
+>>> %session $new_session
 
  # g is not defined so now this will throw error.
 >>> %gremlin g.V()
