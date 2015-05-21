@@ -1,0 +1,2 @@
+0.0.1 05/20/2015 - Simple working version.
+0.0.2 05/21/2015 - Return session_id with %session line_magic.

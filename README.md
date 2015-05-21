@@ -4,6 +4,7 @@
 
 [Example notebook](https://github.com/davebshow/ipython-gremlin/blob/master/example.ipynb)
 
+Inspired by [ipython-cypher](https://github.com/versae/ipython-cypher) from @versae
 
 Uses sessions to persist Gremlin across cells.
 
@@ -37,8 +38,21 @@ Example use:
 # Change to a new session.
 >>> import uuid
 >>> new_session = str(uuid.uuid4())
->>> %session $new_session
+%session $new_session
+'0b9df5a5-7023-4a5a-b16b-def9f02a8a78'
 
  # g is not defined so now this will throw error.
 >>> %gremlin g.V()
 ```
+
+### TODO:
+
+* Add support for config options:
+  - session control
+  - multiple connection management (multiple dbs)
+  - connection pooling???
+
+* Add integration with Python scientific libraries, [ipython-cypher](https://github.com/versae/ipython-cypher) has some good examples here.
+  - NetworkX
+  - Pandas
+  - Matplotlib
