@@ -5,7 +5,7 @@ import aiogremlin
 
 # from IPython.config.configurable import Configurable
 from IPython.core.magic import (Magics, magics_class, line_magic, cell_magic,
-    needs_local_scope)
+                                needs_local_scope)
 # from IPython.utils.traitlets import Int, Float, Unicode, Bool
 
 
@@ -26,6 +26,7 @@ class GremlinMagic(Magics):
     def execute(self, line, cell="", local_ns={}):
         query = """{}\n{}""".format(line, cell)
         query = query.lstrip("\n")
+
         @asyncio.coroutine
         def run():
             results = []
@@ -40,12 +41,14 @@ class GremlinMagic(Magics):
                         break
                     results += mssg.data
             return results
+
         return self._loop.run_until_complete(run())
 
     @line_magic("session")
-    def session(self, line):
-        self._session = line
-        print(self._session)
+    def session(self, line=""):
+        if line:
+            self._session = line
+        return self._session
 
 
 def load_ipython_extension(ip):

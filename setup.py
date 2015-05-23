@@ -10,10 +10,11 @@ setup(
     url='https://github.com/davebshow/ipython-gremlin',
     description="Runs scripts agains the Gremlin Server from IPython",
     long_description=open("README.txt").read(),
-    packages=["gremlin"],
+    packages=["gremlin", "tests"],
     install_requires=[
         "aiogremlin==0.0.8"
     ],
+    test_suite="tests",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
