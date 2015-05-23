@@ -41,7 +41,7 @@ Example use:
 
 # Change to a new session.
 >>> new_session = "my_new_session_id"
-%session $new_session
+>>> %session $new_session
 "my_new_session_id"
 
  # g is not defined so now this will throw error.
