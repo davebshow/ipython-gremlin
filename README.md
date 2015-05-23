@@ -1,6 +1,6 @@
 # ipython-gremlin 0.0.2
 
-###A simple extension for the Gremlin Server based on [aiogremlin](https://pypi.python.org/pypi/aiogremlin/0.0.8). Works in both the IPython interpreter and the jupyter notebook. Requires Python 3.3 with Asyncio or Python 3.4.
+###A simple IPython extension for the Gremlin Server based on [aiogremlin](https://pypi.python.org/pypi/aiogremlin/0.0.8). Works in both the IPython interpreter and the jupyter notebook. Requires Python 3.3 with Asyncio or Python 3.4.
 
 [Example notebook](https://github.com/davebshow/ipython-gremlin/blob/master/example.ipynb)
 
