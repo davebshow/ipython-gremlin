@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="ipython-gremlin",
-    version="0.0.2",
+    version="0.0.3",
     license="MIT",
     author="davebshow",
     author_email="davebshow@gmail.com",
@@ -12,7 +12,7 @@ setup(
     long_description=open("README.txt").read(),
     packages=["gremlin", "tests"],
     install_requires=[
-        "aiogremlin==0.0.8"
+        "aiogremlin==0.0.9"
     ],
     test_suite="tests",
     classifiers=[
