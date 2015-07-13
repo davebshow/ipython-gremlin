@@ -16,9 +16,8 @@ class GremlinMagic(Magics):
     def __init__(self, shell):
         super().__init__(shell)
         self._loop = asyncio.get_event_loop()
-        self._pool = aiogremlin.WebSocketPool("ws://localhost:8182/",
-                                              loop=self._loop)
-        self._session = str(uuid.uuid4())
+        self._session = None
+        self._processor = ""
 
     @needs_local_scope
     @line_magic("gremlin")
@@ -30,16 +29,14 @@ class GremlinMagic(Magics):
         @asyncio.coroutine
         def run():
             results = []
-            with (yield from self._pool) as conn:
-                client = aiogremlin.GremlinClient(connection=conn,
-                                                  processor="session",
-                                                  loop=self._loop)
-                resp = yield from client.submit(query, session=self._session)
-                while True:
-                    mssg = yield from resp.stream.read()
-                    if mssg is None:
-                        break
-                    results += mssg.data
+            resp = yield from aiogremlin.submit(query, session=self._session,
+                                                processor=self._processor)
+            while True:
+                msg = yield from resp.stream.read()
+                if msg is None:
+                    break
+                if msg.data is not None:
+                    results += msg.data
             return results
 
         return self._loop.run_until_complete(run())
@@ -48,6 +45,7 @@ class GremlinMagic(Magics):
     def session(self, line=""):
         if line:
             self._session = line
+        self._processor = "session"
         return self._session
 
 
