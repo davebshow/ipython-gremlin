@@ -1,2 +1,3 @@
 0.0.1 05/20/2015 - Simple working version.
 0.0.2 05/21/2015 - %session magic with null arg is getter, with arg is settr.
+0.0.4 07/13/2015 - sessions are no longer default behavior.
