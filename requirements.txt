@@ -1,0 +1,2 @@
+"aiogremlin==0.0.11"
+"ipython==3.2.1"

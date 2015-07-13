@@ -45,7 +45,7 @@ class GremlinMagic(Magics):
     def session(self, line=""):
         if line:
             self._session = line
-        self._processor = "session"
+            self._processor = "session"
         return self._session
 
 
