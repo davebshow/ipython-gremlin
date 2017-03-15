@@ -3,17 +3,17 @@ from setuptools import setup
 
 setup(
     name="ipython-gremlin",
-    version="0.0.4",
+    version="1.0.0b1",
     license="MIT",
     author="davebshow",
     author_email="davebshow@gmail.com",
     url='https://github.com/davebshow/ipython-gremlin',
     description="Runs scripts agains the Gremlin Server from IPython",
     long_description=open("README.txt").read(),
-    packages=["gremlin", "tests"],
+    packages=["gremlin"],
     install_requires=[
-        "aiogremlin==0.0.11",
-        "ipython==3.2.1"
+        "aiogremlin==3.2.4b2",
+        "ipython==5.3.0"
     ],
     test_suite="tests",
     classifiers=[

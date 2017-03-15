@@ -54,6 +54,8 @@ class ConnectionRegistry:
             cls.current = cls.connections.get(primary)
             if not cls.current:
                 cls.currernt = cls._get_connection(primary, secondary, config)
+            elif secondary:
+                cls._replace_alias(cls.current, secondary)
         elif not cls.current:
             cls.current = cls._get_connection(config.uri, None, config)
         return cls.current
@@ -78,9 +80,17 @@ class ConnectionRegistry:
         if not conn:
             conn = cls._get_connection(primary, secondary, config)
         else:
-            if conn.alias != secondary:
-                cls.connections.pop(conn.alias)
-                cls.connections[secondary] = conn
+            cls._replace_alias(conn, secondary)
+
+
+    @classmethod
+    def _replace_alias(cls, conn, alias):
+        if conn.alias != alias:
+            cls.connections.pop(conn.alias)
+            cls.connections[alias] = conn
+            conn.alias = alias
+            print('Alias-- {} --created for database at {}'.format(
+                alias, conn.uri))
 
     @classmethod
     def set_current_connection(cls, descriptors, config):
@@ -91,6 +101,7 @@ class ConnectionRegistry:
         if not conn:
             conn = cls._get_connection(primary, secondary, config)
         cls.current = conn
+        print('Now using connection at {}'.format(conn.uri))
 
     @classmethod
     def _get_connection(cls, primary, secondary, config):
@@ -99,7 +110,8 @@ class ConnectionRegistry:
                 connection.Connection.open(
                     primary, cls._loop, username=config.username,
                     password=config.password,
-                    response_timeout=config.response_timeout))
+                    response_timeout=config.response_timeout,
+                    ssl_context=config.ssl_context))
         except:
             raise Exception(
                 'Unable to establish connection at URI: {}'.format(primary))
@@ -109,11 +121,11 @@ class ConnectionRegistry:
             conn = RegistryConnection(conn, secondary)
             cls.connections[primary] = conn
             cls.connections[secondary] = conn
+            print('Alias-- {} --created for database at {}'.format(
+                secondary, primary))
             return conn
 
     @classmethod
     def _create_secondary(cls, primary):
         alias = urlparse(primary).netloc.split(':')[0]
-        print('Alias-- {} --created for database at {}'.format(
-            alias, primary))
         return alias

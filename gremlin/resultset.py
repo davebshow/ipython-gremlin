@@ -13,13 +13,24 @@ from gremlin.types import (
     gremlin_types, TypeClasses, Vertex, Edge, VertexProperty, Property, Path)
 
 
-class ResultSet:
+class ResultSet(list):
 
-    def __init__(self, results, traversal):
+    def __init__(self, results, traversal, side_effects=None):
         self._results = results
         self._traversal = traversal
         self._dataframe = None
         self._graph = None
+        self._side_effects = None
+        super().__init__(results)
+
+    @property
+    def side_effect_keys(self):
+        if self._side_effects:
+            return set(self._side_effects.keys())
+
+    @property
+    def side_effects(self):
+        return self._side_effects
 
     @property
     def results(self):
@@ -28,9 +39,6 @@ class ResultSet:
     @property
     def traversal(self):
         return self._traversal
-
-    def __getitem__(self, i):
-        return self._results[i]
 
     raw = results
 
@@ -104,15 +112,15 @@ class ResultSet:
 
     def _dictify_element(self, element, tp):
         if tp == Vertex:
-            element = {'type': tp,'id': element.id, 'label': element.label}
+            element = {'id': element.id, 'label': element.label}
         elif tp == Edge:
-            element = {'type': tp, 'id': element.id, 'label': element.label,
+            element = {'id': element.id, 'label': element.label,
                        'outV': element.outV.id, 'inV': element.inV.id}
         elif tp == VertexProperty:
-            element = {'type': tp, 'id': element.id, 'label': element.label,
+            element = {'id': element.id, 'label': element.label,
                        'key': element.key, 'value': element.value}
         elif tp == Property:
-            element = {'type': tp, 'key': element.key, 'value': element.value}
+            element = {'key': element.key, 'value': element.value}
         else:
             raise RuntimeError('Unable to generate dataframe')
         return element

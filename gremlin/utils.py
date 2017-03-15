@@ -3,6 +3,8 @@ import json
 import re
 
 from aiogremlin.gremlin_python.driver import request
+from aiogremlin.remote.driver_remote_side_effects import (
+    RemoteTraversalSideEffects)
 from gremlin import registry, resultset
 
 
@@ -27,7 +29,7 @@ def _sanitize_namespace(user_ns):
     return bindings
 
 
-def submit(gremlin, user_ns, aliases, conn, result_set=True):
+def submit(gremlin, user_ns, aliases, conn):
     """
     Submit a script to the Gremlin Server using the IPython namespace
     using the IPython namespace to pass bindings using Magics configuration
@@ -39,14 +41,10 @@ def submit(gremlin, user_ns, aliases, conn, result_set=True):
     message = request.RequestMessage(
         processor='', op='eval',
         args={'gremlin': gremlin, 'aliases': aliases, 'bindings': bindings})
+    return loop.run_until_complete(_submit(conn, message))
 
-    async def go(conn, message):
-        result_set = await conn.write(message)
-        results = await result_set.all()
-        return results
 
-    results = loop.run_until_complete(go(conn, message))
-    if result_set:
-        # This is currently because the result set doesn't have a nice repr
-        results = resultset.ResultSet(results, message)
-    return results
+async def _submit(conn, message):
+    result_set = await conn.write(message)
+    results = await result_set.all()
+    return resultset.ResultSet(results, message)

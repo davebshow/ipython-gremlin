@@ -1,6 +1,3 @@
-**alpha**
-
-
 `Official Documentation`_
 
 

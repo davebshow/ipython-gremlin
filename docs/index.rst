@@ -7,27 +7,42 @@
 ipython-gremlin
 ===============
 
-A simple `IPython`_ extension for the `Gremlin Server`_ based on `aiogremlin`_.  Works in
-both the IPython interpreter and the `Jupyter`_ notebook.
+`ipython-gremlin` is an `IPython`_ extension module that allows the user to magically
+submit scripts to the `TinkerPop Gremlin Server`_ using `%gremlin` (line) and `%%gremlin` (cell)
+magic...
+
+`ipython-gremlin` also provides basic integration with `pandas`_ and `NetworkX`_
+data/graph analysis libraries to translate Gremlin traversal results to the
+data structures commonly used in Python scientific computing.
+
+This work is based on Javier de la Rosa's excellent `ipython-cypher` extension.
 
 **Check out this example** `IPython notebook`_
 
 Releases
 ========
-The latest release of :py:mod:`ipython-gremlin<gremlin>` is **0.0.4**.
+The latest release of :py:mod:`ipython-gremlin` is **1.0.0**.
 
 
 Requirements
 ============
 
-- Python 3.4
-- Tinkerpop 3 Gremlin Server 3.0.0.M9
+- Python 3.5 +
+- TinkerPop 3.2.4
 
 
 Dependencies
 ============
-- aiogremlin 0.0.11
-- ipython 3.2.1
+- aiogremlin 3.2.4
+- ipython 5.3.0
+
+To leverage the full power of :py:mod:`ipython-gremlin`, please install commonly used
+scientific computing libraries::
+
+    $ pip install pandas
+    $ pip install networkx
+    $ pip install matplotlib
+
 
 Installation
 ============
@@ -39,13 +54,27 @@ Install using pip::
 Getting Started
 ===============
 
-Minimal Example
----------------
+Load the extension::
+
+    %load_ext gremlin
+
 Submit a script to the Gremlin Server::
 
-    >>> %load_ext gremlin
-    >>> %gremlin 1 + 1
-    [2]
+    %gremlin g.V()
+
+Store query results in a variable::
+
+    verts = %grelmin g.V()
+
+Get a `pandas`_ :py:class:`pandas.DataFrame`::
+
+    verts = %gremlin g.V()
+    df = verts.get_dataframe()
+
+Get a `NetworkX`_ :py:class:`networkx.MultiDiGraph` from a collection of elements::
+
+    edges = %gremlin g.E()
+    graph = edges.get_graph()
 
 Contribute
 ----------
@@ -57,8 +86,7 @@ sure to add appropriate tests and run them::
     $ ipython setup.py test
 
 I am particularly interested in adding features that integrate Pandas and NetworkX.
-`ipython-cypher`_ has some good examples of this. In the future there will be CI and
-more info on contributing.
+`ipython-cypher`_ has some good examples of this.
 
 
 Contents:
@@ -66,7 +94,8 @@ Contents:
 .. toctree::
    :maxdepth: 3
 
-   gremlin
+   usage
+   modules
 
 
 Indices and tables
@@ -77,9 +106,11 @@ Indices and tables
 * :ref:`search`
 
 .. _Github: https://github.com/davebshow/ipython-gremlin/
-.. _Gremlin Server: http://tinkerpop.incubator.apache.org/
+.. _TinkerPop Gremlin Server: http://tinkerpop.apache.org/
 .. _`aiogremlin`: http://aiogremlin.readthedocs.org/en/latest/
 .. _`IPython`: http://ipython.org/
 .. _`ipython-cypher`: http://ipython-cypher.readthedocs.org/en/latest/
 .. _IPython notebook: https://github.com/davebshow/ipython-gremlin/blob/master/example.ipynb
 .. _Jupyter: https://jupyter.org/
+.. _pandas: http://pandas.pydata.org/
+.. _NetworkX: https://networkx.github.io/

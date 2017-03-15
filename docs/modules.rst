@@ -1,5 +1,5 @@
-gremlin
-=======
+ipython-gremlin API
+===================
 
 .. toctree::
    :maxdepth: 4

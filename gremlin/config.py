@@ -6,7 +6,7 @@ DEFAULT_CONFIG = {
     'aliases': {'g': 'g'},
     'password': '',
     'response_timeout': None,
-    'side_effects': False,
+    'ssl_context': None,
     'uri': 'ws://localhost:8182/gremlin',
     'username': ''
 }
