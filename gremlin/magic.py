@@ -67,10 +67,13 @@ class GremlinMagic(Magics):
         return utils.submit(script, user_ns, self.aliases, connection)
 
     @line_magic('gremlin.close')
-    @line_magic('gremlin.connection.close')
     def close(self, line):
         """Explicity close underlying DB connections"""
         registry.ConnectionRegistry.close()
+
+    @line_magic('gremlin.connection.close')
+    def close_connection(self, line):
+        registry.ConnectionRegistry.close(line)
 
     @line_magic('gremlin.connection.set_alias')
     def set_connection_alias(self, line):

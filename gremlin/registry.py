@@ -61,9 +61,26 @@ class ConnectionRegistry:
         return cls.current
 
     @classmethod
-    def close(cls):
-        """Close all DB connections"""
-        conns = set(cls.connections.values())
+    def close(cls, connection_str=None):
+        """Close DB connections"""
+        if connection_str:
+            conn = cls.connections.pop(connection_str)
+            if not conn:
+                raise RuntimeError('Specified conn does not exist')
+            if connection_str == conn.uri:
+                cls.connections.pop(conn.alias)
+            else:
+                cls.connections.pop(conn.uri)
+            if conn is cls.current:
+                cls.current = None
+            conns = [conn]
+        else:
+            keys= set(cls.connections.keys())
+            conns = set()
+            for k in keys:
+                conn = cls.connections.pop(k)
+                conns.add(conn)
+            cls.current = None
 
         async def go(conns):
             for conn in conns:

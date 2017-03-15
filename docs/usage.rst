@@ -190,13 +190,30 @@ line of the cell::
     Out[22]: [v[1], v[2], v[3], v[4], v[5], v[6]]
 
 
+Closing Connections
+-------------------
+:py:mod:`ipython-gremlin` tries to clean up conextions using the :py:mod:`atexit` module, but
+it is a good idea to explicitly close connections at the end of the interactive session.
+This is done using line magic::
+
+    In [23]: %gremlin.connection.close
+
+Or, more simply:
+
+    In [24]: %gremlin.close
+
+To close an individual connection, pass a valid connection string as an argument
+to `%gremlin.connection.close`::
+
+    In [25]: %gremlin.connection.close localhost
+
 Configuration
 =============
 :py:class:`GremlinMagic<gremlin.magic.GremlinMagic>` also supports the :py:class:`Configurable`
 interface. It provides a range of connection configuration options. These options are displayed
 using the `%config` cell magic::
 
-    In [23]: %config GremlinMagic
+    In [26]: %config GremlinMagic
     GremlinMagic options
     ------------------
     GremlinMagic.aliases=<Dict>
@@ -220,20 +237,12 @@ using the `%config` cell magic::
 
 Changing this configuration is easy::
 
-    In [24]: %config GremlinMagic.username = 'davebshow'
+    In [27]: %config GremlinMagic.username = 'davebshow'
 
-    In [25]: %config GremlinMagic.username
-    Out[25]: 'davebshow'
+    In [28]: %config GremlinMagic.username
+    Out[28]: 'davebshow'
 
 **NOTE** Configuration changes do not affect connections that have already been established.
 Please update configuration before performing other `%gremlin` line magic.
-
-Closing Connections
-===================
-:py:mod:`ipython-gremlin` tries to clean up conextions using the :py:mod:`atexit` module, but
-it is a good idea to explicitly close connections at the end of the interactive session.
-This is done using line magic::
-
-    In [26]: %gremlin.close
 
 That's it! I hope you enjoy using :py:mod:`ipython-gremlin`!

@@ -68,6 +68,20 @@ class MagicTest(unittest.TestCase):
         ipython.run_cell_magic("gremlin", "test1", '1 + 1')
         ipython.run_line_magic('gremlin.connection.set_current', 'test1')
 
+    def test_close(self):
+        ipython.run_line_magic("gremlin", "1 + 1")
+        ipython.run_line_magic("gremlin.close", "")
+        self.assertIsNone(ConnectionRegistry.connections.get("localhost"))
+        self.assertIsNone(ConnectionRegistry.connections.get("ws://localhost:8182/gremlin"))
+        ipython.run_line_magic("gremlin", "1 + 1")
+        ipython.run_line_magic("gremlin.close", "localhost")
+        self.assertIsNone(ConnectionRegistry.connections.get("localhost"))
+        self.assertIsNone(ConnectionRegistry.connections.get("ws://localhost:8182/gremlin"))
+        ipython.run_line_magic("gremlin.close", "ws://localhost:8182/gremlin")
+        self.assertIsNone(ConnectionRegistry.connections.get("localhost"))
+        self.assertIsNone(ConnectionRegistry.connections.get("ws://localhost:8182/gremlin"))
+
+
 class ParserTest(unittest.TestCase):
 
     def test_parser(self):
