@@ -3,7 +3,7 @@ from setuptools import setup
 
 setup(
     name="ipython-gremlin",
-    version="1.0.0b1",
+    version="1.0.0b2",
     license="MIT",
     author="davebshow",
     author_email="davebshow@gmail.com",
