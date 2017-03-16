@@ -1,8 +1,10 @@
 import collections
 import enum
 
+from aiogremlin.gremlin_python.statics import long
 from aiogremlin.gremlin_python.structure.graph import (
     Graph, Property, Path, Vertex, Edge, VertexProperty)
+
 
 
 TypeClasses = enum.Enum('TypeTypeClasses', 'ELEMENT CONTAINER PRIMITIVE')
@@ -23,5 +25,6 @@ gremlin_types = {
     bytes: TypeClasses.PRIMITIVE,
     int: TypeClasses.PRIMITIVE,
     float: TypeClasses.PRIMITIVE,
-    bool: TypeClasses.PRIMITIVE
+    bool: TypeClasses.PRIMITIVE,
+    long: TypeClasses.PRIMITIVE
 }

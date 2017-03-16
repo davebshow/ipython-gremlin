@@ -15,25 +15,22 @@ from gremlin.types import (
 
 class ResultSet(list):
 
-    def __init__(self, results, traversal, side_effects=None):
+    def __init__(self, results, traversal):
         self._results = results
         self._traversal = traversal
         self._dataframe = None
         self._graph = None
-        self._side_effects = None
         super().__init__(results)
 
-    @property
-    def side_effect_keys(self):
-        if self._side_effects:
-            return set(self._side_effects.keys())
-
-    @property
-    def side_effects(self):
-        return self._side_effects
+    def __repr__(self):
+        if len(self._results) == 1:
+            return repr(self._results[0])
+        return super().__repr__()
 
     @property
     def results(self):
+        if len(self._results) == 1:
+            return self._results[0]
         return self._results
 
     @property
@@ -99,7 +96,7 @@ class ResultSet(list):
                             self._dataframe = pd.DataFrame.from_dict(
                             value, orient='index')
                         elif dtc == TypeClasses.PRIMITIVE:
-                            self._dataframe = pd.DataFrame(value)
+                            self._dataframe = pd.Series(value)
                         elif dtc == TypeClasses.ELEMENT:
                             for k, v in value.items():
                                 value[k] = self._dictify_element(v, dtp)
