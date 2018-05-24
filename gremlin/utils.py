@@ -1,10 +1,9 @@
 """Utility functions to support GremlinMagic operations"""
+import asyncio
 import json
 import re
 
-from aiogremlin.gremlin_python.driver import request
-from aiogremlin.remote.driver_remote_side_effects import (
-    RemoteTraversalSideEffects)
+from gremlin_python.driver import request
 from gremlin import registry, resultset
 
 
@@ -36,12 +35,11 @@ def submit(gremlin, user_ns, aliases, conn):
     and a connection registered with
     :py:class:`ConnectionRegistry<gremlin.registry.ConnectionRegistry>`
     """
-    loop = conn.loop
     bindings = _sanitize_namespace(user_ns)
     message = request.RequestMessage(
         processor='', op='eval',
         args={'gremlin': gremlin, 'aliases': aliases, 'bindings': bindings})
-    return loop.run_until_complete(_submit(conn, message))
+    return asyncio.run_coroutine_threadsafe(_submit(conn, message), registry.LOOP).result()
 
 
 async def _submit(conn, message):

@@ -12,8 +12,8 @@ setup(
     long_description=open("README.txt").read(),
     packages=["gremlin"],
     install_requires=[
-        "aiogremlin==3.2.4",
-        "ipython==5.3.0"
+        "aiogremlin>=3.2.6",
+        "ipython>=5.3.0"
     ],
     test_suite="tests",
     classifiers=[

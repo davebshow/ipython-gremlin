@@ -1,8 +1,8 @@
 import collections
 import enum
 
-from aiogremlin.gremlin_python.statics import long
-from aiogremlin.gremlin_python.structure.graph import (
+from gremlin_python.statics import long
+from gremlin_python.structure.graph import (
     Graph, Property, Path, Vertex, Edge, VertexProperty)
 
 

@@ -1,8 +1,14 @@
 """Simple interface for keeping track of DB connections and aliases"""
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 from urllib.parse import urlparse
 
 from aiogremlin.driver import connection
+
+
+LOOP = asyncio.new_event_loop()
+executor = ThreadPoolExecutor(max_workers=1)
+executor.submit(LOOP.run_forever)
 
 
 class RegistryConnection:
@@ -44,7 +50,7 @@ class ConnectionRegistry:
 
     current = None
     connections = {}
-    _loop = asyncio.get_event_loop()
+    _loop = LOOP
 
     @classmethod
     def get(cls, descriptors, config=None):
@@ -86,7 +92,11 @@ class ConnectionRegistry:
             for conn in conns:
                 await conn.close()
 
-        cls._loop.run_until_complete(go(conns))
+        asyncio.run_coroutine_threadsafe(go(conns), LOOP).result()
+        LOOP.stop()
+        LOOP.close()
+        executor.shutdown()
+
 
     @classmethod
     def set_connection_alias(cls, descriptors, config):
@@ -123,12 +133,13 @@ class ConnectionRegistry:
     @classmethod
     def _get_connection(cls, primary, secondary, config):
         try:
-            conn = cls._loop.run_until_complete(
-                connection.Connection.open(
-                    primary, cls._loop, username=config.username,
-                    password=config.password,
-                    response_timeout=config.response_timeout,
-                    ssl_context=config.ssl_context))
+            open_conn = connection.Connection.open(
+                primary, cls._loop, username=config.username,
+                password=config.password,
+                response_timeout=config.response_timeout,
+                ssl_context=config.ssl_context)
+            conn = asyncio.run_coroutine_threadsafe(open_conn, LOOP).result()
+
         except:
             raise Exception(
                 'Unable to establish connection at URI: {}'.format(primary))
