@@ -1,11 +1,12 @@
 """IPython Gremlin custom magic"""
+import argparse
 import atexit
 import ssl
 
 from traitlets import Unicode, Dict, Float, Bool, Instance
-from IPython.core.error import TryNext
 from IPython.core.magic import (Magics, magics_class, line_magic, cell_magic,
                                 line_cell_magic, needs_local_scope)
+from IPython.core.magic_arguments import argument, magic_arguments, parse_argstring
 
 
 from gremlin import config, registry, utils
@@ -25,6 +26,8 @@ class GremlinMagic(Magics):
         config.defaults.aliases, allow_none=True, config=True, help="""
         Aliases for underlying graph
     """)
+
+    bindings = set()
 
     password = Unicode(config.defaults.password, config=True, help="""
         Password used in SASL authentication
@@ -50,21 +53,48 @@ class GremlinMagic(Magics):
         Username used in SASL authentication
     """)
 
+    use_local_namespace = Bool(
+        config.defaults.use_local_namespace,
+        config=True,
+        help="Whether to load local namespace for each query."
+    )
+
+    warnings = Bool(
+        config.defaults.warnings,
+        config=True,
+        help="Whether to enable warning messages."
+    )
+
     @needs_local_scope
     @line_cell_magic('gremlin')
-    def gremlin(self, line, cell=None, local_ns={}):
+    def gremlin(self, line, cell=None, local_ns=None):
         """I make the illogical logical"""
+        local_ns = local_ns or dict()
+
         if cell is None:
             connection_str = ''
             script = line.lstrip("\n")
         else:
             connection_str = line
             script = cell
+
         user_ns = self.shell.user_ns
         user_ns.update(local_ns)
+
+        if self.use_local_namespace:
+
+            # private variables have to be registered explicitly in this case
+            bindings = utils.sanitize_namespace(user_ns, self.bindings)
+
+        else:
+
+            bindings = {
+                k: v for k, v in user_ns.items() if k in self.bindings
+            }
+
         descriptors = utils.parse(connection_str)
         connection = registry.ConnectionRegistry.get(descriptors, self)
-        return utils.submit(script, user_ns, self.aliases, connection)
+        return utils.submit(script, connection, bindings, self.aliases)
 
     @line_magic('gremlin.close')
     def close(self, line):
@@ -91,6 +121,44 @@ class GremlinMagic(Magics):
     def get_current_connection(self, line):
         """Get the currently used connection object"""
         return registry.ConnectionRegistry.current
+
+    @line_magic('gremlin.clean_bindings')
+    def clean_bindings(self, line):
+        self.bindings = set()
+
+    @line_magic('gremlin.register_binding')
+    def register_binding(self, binding: str):
+        self.bindings.add(binding)
+
+    @line_magic('gremlin.register_namespace')
+    def register_namespace(self, params=''):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('--allow-private', action='store_true',
+                            help="Whether to include private variables.")
+        args = parser.parse_args(params.split())
+
+        namespace = self.shell.user_ns
+        for var, value in utils.sanitize_namespace(
+                namespace, self.bindings, args.allow_private):
+
+            self.bindings.add(var)
+
+    @line_magic('gremlin.remove_binding')
+    def remove_binding(self, key: str):
+        self.bindings.remove(key)
+
+    @line_magic('gremlin.get_bindings')
+    def get_bindings(self, line):
+        bindings = self.bindings
+
+        if self.use_local_namespace:
+
+            bindings = utils.sanitize_namespace(
+                self.shell.user_ns,
+                bindings=bindings
+            )
+
+        return bindings
 
 
 def close():
