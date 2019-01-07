@@ -124,14 +124,27 @@ class GremlinMagic(Magics):
 
     @line_magic('gremlin.clean_bindings')
     def clean_bindings(self, line):
+        """Clean all registered bindings."""
         self.bindings = set()
 
     @line_magic('gremlin.register_binding')
     def register_binding(self, binding: str):
+        """Register namespace variable as gremlin binding.
+
+        Example: `%gremlin.register_binding foo` where `foo` is
+        name of our variable, ie. foo = 'vertex_id'.
+
+        Note: Binding value has to be JSON serializable.
+        """
         self.bindings.add(binding)
 
     @line_magic('gremlin.register_namespace')
     def register_namespace(self, params=''):
+        """Register the whole namespace.
+
+        Note: private variables (ie. underscored variables)
+        have to be registered explicitly by `register_binding`.
+        """
         parser = argparse.ArgumentParser()
         parser.add_argument('--allow-private', action='store_true',
                             help="Whether to include private variables.")
@@ -145,10 +158,12 @@ class GremlinMagic(Magics):
 
     @line_magic('gremlin.remove_binding')
     def remove_binding(self, key: str):
+        """Remove registered binding."""
         self.bindings.remove(key)
 
     @line_magic('gremlin.get_bindings')
     def get_bindings(self, line):
+        """Get set of registered bindings."""
         bindings = self.bindings
 
         if self.use_local_namespace:

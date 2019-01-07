@@ -21,6 +21,7 @@ def parse(connection_str):
 
 
 def sanitize_namespace(user_ns, bindings=None, allow_private=False):
+    """Filter namespace."""
     bindings = bindings or dict()
     namespace = dict()
 
