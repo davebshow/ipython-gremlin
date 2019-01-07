@@ -1,5 +1,7 @@
 from setuptools import setup
 
+with open("requirements.txt", 'r') as f:
+    REQUIREMENTS = f.readlines()
 
 setup(
     name="ipython-gremlin",
@@ -11,10 +13,7 @@ setup(
     description="Runs scripts agains the Gremlin Server from IPython",
     long_description=open("README.txt").read(),
     packages=["gremlin"],
-    install_requires=[
-        "aiogremlin>=3.2.6",
-        "ipython>=5.3.0"
-    ],
+    install_requires=REQUIREMENTS,
     test_suite="tests",
     classifiers=[
         'Development Status :: 3 - Alpha',
