@@ -64,7 +64,7 @@ Submit a script to the Gremlin Server::
 
 Store query results in a variable::
 
-    verts = %grelmin g.V()
+    verts = %gremlin g.V()
 
 Get a `pandas`_ :py:class:`pandas.DataFrame`::
 
